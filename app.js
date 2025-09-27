@@ -3,19 +3,11 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const authRoutes = require("./Routes/authRoutes");
-const depositRoutes = require("./Routes/depositRoutes");
-const withdrawRoutes = require("./Routes/withdrawRoutes");
-
 const app = express();
 
 app.use(
   cors({
     origin: process.env.FRONTEND_URL,
-
-    origin: "https://fintrackx.vercel.app",
-
-    // origin: "https://expensetracker-clientside.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
@@ -33,9 +25,22 @@ app.get("/", (req, res) => {
   res.send("Backend API is running.");
 });
 
-// Use route modules
-app.use("/auth", authRoutes);
-app.use("/deposit", depositRoutes);
-app.use("/withdraw", withdrawRoutes);
+try {
+  console.log("Setting up routes...");
+
+  app.use("/api/applications", require("./Routes/applicationRoutes"));
+  console.log("/api/applications route loaded");
+
+  app.use("/api/book-call", require("./Routes/bookCallRoutes"));
+  console.log("/api/book-call route loaded");
+
+  app.use("/api/get-quote", require("./Routes/getQuoteRoutes"));
+  console.log("/api/get-quote route loaded");
+
+  app.use("/api/request-pricing", require("./Routes/requestPricingRoutes"));
+  console.log("/api/request-pricing route loaded");
+} catch (err) {
+  console.error("Error while loading routes:", err);
+}
 
 module.exports = app;
