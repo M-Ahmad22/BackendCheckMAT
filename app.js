@@ -3,6 +3,12 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
 
+const requestPricingRoutes = require("./Routes/requestPricingRoutes");
+const applicationRoutes = require("./Routes/applicationRoutes");
+const bookingRoutes = require("./Routes/bookCallRoutes");
+const getQuoteRoutes = require("./Routes/getQuoteRoutes");
+const authRoutes = require("./Routes/authRoutes");
+
 const app = express();
 
 app.use(
@@ -25,22 +31,12 @@ app.get("/", (req, res) => {
   res.send("Backend API is running.");
 });
 
-try {
-  console.log("Setting up routes...");
-
-  app.use("/api/applications", require("./Routes/applicationRoutes"));
-  console.log("/api/applications route loaded");
-
-  app.use("/api/book-call", require("./Routes/bookCallRoutes"));
-  console.log("/api/book-call route loaded");
-
-  app.use("/api/get-quote", require("./Routes/getQuoteRoutes"));
-  console.log("/api/get-quote route loaded");
-
-  app.use("/api/request-pricing", require("./Routes/requestPricingRoutes"));
-  console.log("/api/request-pricing route loaded");
-} catch (err) {
-  console.error("Error while loading routes:", err);
-}
+app.use("/api/request-pricing", requestPricingRoutes);
+app.use("/uploads", express.static("uploads"));
+app.use("/api", applicationRoutes);
+app.use("/api", bookingRoutes);
+app.use("/api", getQuoteRoutes);
+app.use("/api/applications", applicationRoutes);
+app.use("/api/auth", authRoutes);
 
 module.exports = app;
